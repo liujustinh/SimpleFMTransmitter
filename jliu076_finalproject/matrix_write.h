@@ -1,3 +1,20 @@
+/*
+ * matrix_write.h
+ *
+ * Created: 11/19/2019 4:44:45 PM
+ *  Author: Justin
+ */ 
+
+
+#ifndef MATRIX_WRITE_H_
+#define MATRIX_WRITE_H_
+/*
+ * sr_test.c
+ *
+ * Created: 6/1/2018 11:38:37 PM
+ *  Author: Justin
+ */ 
+
 #include <avr/io.h>
 #include <util/delay.h>
 
@@ -5,6 +22,13 @@
 #define red 2 
 #define column 3 
 
+unsigned char shiftLeft(unsigned char x) {
+	return (x << 1) | (x >> (8 - 1));
+}
+
+unsigned char shiftRight(unsigned char x) {
+	return (x >> 1) | (x << (8 - 1));
+}
 
 void Wait()
 {
@@ -71,3 +95,5 @@ void pulseLED() {
 	transmit_data(blue, 0xFF);
 	transmit_data(red, 0xFF);
 }
+
+#endif /* MATRIX_WRITE_H_ */

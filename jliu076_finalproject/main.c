@@ -1,7 +1,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //////////////////////////CS122A FINAL PROJECT///////////////////////////////
-/////////////////////////SimpleFMTransmitter/////////////////////////////////
+//////////////////////////SimpleFMTransmitter////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
 #include <avr/interrupt.h>
@@ -9,13 +9,13 @@
 #include <avr/io.h>
 
 #include "bit.h"
-#include "joystick.c"
-#include "nokia5110.c"
+#include "matrix_write.h"
 #include "nokia5110.h"
+#include "joystick.h"
 #include "timer.h"
 #include "tasks.h"
 #include "rows.h"
-#include "matrix_write.c"
+
 
 ///////STATE MACHINE 1: User menu interface/////////
 enum SM1_States {SM1_Init, SM1_Wait, SM1_Start} SM1_State;
@@ -36,10 +36,19 @@ int SM1_Menu(int SM1_State) {
 	}
 	switch (SM1_State) {
 		case SM1_Init: 
-		
+			nokia_lcd_clear();
+			nokia_lcd_set_cursor(10, 0);
+			nokia_lcd_write_string("Connect 4", 1.5);
+			nokia_lcd_set_cursor(5, 20);
+			nokia_lcd_write_string("Start", 1);
+			nokia_lcd_set_cursor(0, 20);
+			nokia_lcd_write_string("*", 1);
+			nokia_lcd_set_cursor(5, 30);
+			nokia_lcd_write_string("Options", 1);
+			nokia_lcd_render();
 			break; 
 		case SM1_Wait: 
-			
+			resetJoystick(); 
 			break; 
 		case SM1_Start: 
 		
@@ -222,7 +231,7 @@ int main(void)
     while(1)
     {
 		joys_tick(); 
-	    for ( int i = 0; i < numTasks; i++ ) {
+	    for (int i = 0; i < numTasks; i++ ) {
 		    if ( tasks[i]->elapsedTime == tasks[i]->period ) {
 			    tasks[i]->state = tasks[i]->TickFct(tasks[i]->state);
 			    tasks[i]->elapsedTime = 0;

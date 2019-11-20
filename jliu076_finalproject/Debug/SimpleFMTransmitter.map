@@ -1,7 +1,7 @@
 Archive member included to satisfy reference by file (symbol)
 
 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_udivmodqi4.o)
-                              main.o (__udivmodqi4)
+                              nokia5110.o (__udivmodqi4)
 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_udivmodsi4.o)
                               main.o (__udivmodsi4)
 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
@@ -11,22 +11,22 @@ d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/..
 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_copy_data.o)
                               main.o (__do_copy_data)
 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_clear_bss.o)
-                              joystick.o (__do_clear_bss)
+                              main.o (__do_clear_bss)
 
 Allocating common symbols
 Common symbol       size              file
 
 game_table          0x80              main.o
-up                  0x2               joystick.o
+up                  0x2               main.o
 prev_blue           0x1               main.o
 ROW_4               0x3               main.o
 SM1_State           0x1               main.o
-right               0x2               joystick.o
-left                0x2               joystick.o
+right               0x2               main.o
+left                0x2               main.o
 ROW_1               0x3               main.o
 ROW_5               0x3               main.o
 winner              0x2               main.o
-down                0x2               joystick.o
+down                0x2               main.o
 ROW_7               0x3               main.o
 ROW_2               0x3               main.o
 ROW_0               0x3               main.o
@@ -39,35 +39,18 @@ Discarded input sections
 
  .data          0x00000000        0x0 D:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/ATmega_DFP/1.3.300/gcc/dev/atmega1284/avr51/crtatmega1284.o
  .bss           0x00000000        0x0 D:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/ATmega_DFP/1.3.300/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .text          0x00000000        0x0 joystick.o
- .data          0x00000000        0x0 joystick.o
- .bss           0x00000000        0x0 joystick.o
- .text.ADC_init
-                0x00000000       0x16 joystick.o
- .text.readADC  0x00000000       0x22 joystick.o
- .text.joys_tick
-                0x00000000       0xce joystick.o
- .text.resetJoystick
-                0x00000000       0x22 joystick.o
  .text          0x00000000        0x0 main.o
  .data          0x00000000        0x0 main.o
  .bss           0x00000000        0x0 main.o
  .text.SetBit   0x00000000       0x2a main.o
  .text.GetBit   0x00000000       0x12 main.o
+ .text.shiftLeft
+                0x00000000        0x6 main.o
+ .text.shiftRight
+                0x00000000        0x8 main.o
+ .text.Wait     0x00000000       0x12 main.o
  .text.resetJoystick
                 0x00000000       0x22 main.o
- .text.nokia_lcd_power
-                0x00000000       0x10 main.o
- .text.nokia_lcd_set_pixel
-                0x00000000       0x56 main.o
- .text.nokia_lcd_write_char
-                0x00000000      0x15c main.o
- .text.nokia_lcd_write_string
-                0x00000000       0x26 main.o
- .text.nokia_lcd_set_cursor
-                0x00000000        0xa main.o
- .text.nokia_lcd_render
-                0x00000000       0x34 main.o
  .text.TimerOff
                 0x00000000        0x6 main.o
  .text.TimerISR
@@ -77,8 +60,10 @@ Discarded input sections
                 0x00000000       0x24 main.o
  .text.row_init
                 0x00000000       0x6a main.o
+ .text.row_display
+                0x00000000       0x7e main.o
  .text.moveBlock
-                0x00000000      0x128 main.o
+                0x00000000      0x11c main.o
  .text.newTurn  0x00000000       0x50 main.o
  .text.checkFull
                 0x00000000       0x26 main.o
@@ -86,9 +71,6 @@ Discarded input sections
                 0x00000000      0x162 main.o
  .text.checkWin
                 0x00000000      0x124 main.o
- .text.Wait     0x00000000       0x12 main.o
- .text.row_display
-                0x00000000       0x88 main.o
  .bss.placement_error
                 0x00000000        0x2 main.o
  .data.player2_pos
@@ -103,36 +85,9 @@ Discarded input sections
                 0x00000000        0x2 main.o
  .bss.player1_moves
                 0x00000000        0x2 main.o
- .progmem.data.CHARSET
-                0x00000000      0x1e0 main.o
- .text          0x00000000        0x0 matrix_write.o
- .data          0x00000000        0x0 matrix_write.o
- .bss           0x00000000        0x0 matrix_write.o
- .text.Wait     0x00000000       0x12 matrix_write.o
- .text.transmit_data
-                0x00000000       0xdc matrix_write.o
- .text.pulseLED
-                0x00000000       0x20 matrix_write.o
- .debug_info    0x00000000      0x2ea matrix_write.o
- .debug_abbrev  0x00000000      0x121 matrix_write.o
- .debug_loc     0x00000000      0x19d matrix_write.o
- .debug_aranges
-                0x00000000       0x30 matrix_write.o
- .debug_ranges  0x00000000       0x20 matrix_write.o
- .debug_line    0x00000000      0x238 matrix_write.o
- .debug_str     0x00000000      0x1da matrix_write.o
- .comment       0x00000000       0x31 matrix_write.o
- .debug_frame   0x00000000       0x60 matrix_write.o
  .text          0x00000000        0x0 nokia5110.o
  .data          0x00000000        0x0 nokia5110.o
  .bss           0x00000000        0x0 nokia5110.o
- .text.write    0x00000000       0x3c nokia5110.o
- .text.write_cmd
-                0x00000000        0x8 nokia5110.o
- .text.nokia_lcd_init
-                0x00000000       0x82 nokia5110.o
- .text.nokia_lcd_clear
-                0x00000000       0x26 nokia5110.o
  .text.nokia_lcd_power
                 0x00000000       0x10 nokia5110.o
  .text.nokia_lcd_set_pixel
@@ -145,20 +100,8 @@ Discarded input sections
                 0x00000000        0xa nokia5110.o
  .text.nokia_lcd_render
                 0x00000000       0x34 nokia5110.o
- .bss.nokia_lcd
-                0x00000000      0x1fa nokia5110.o
  .progmem.data.CHARSET
                 0x00000000      0x1e0 nokia5110.o
- .debug_info    0x00000000      0x5ea nokia5110.o
- .debug_abbrev  0x00000000      0x1e6 nokia5110.o
- .debug_loc     0x00000000      0x559 nokia5110.o
- .debug_aranges
-                0x00000000       0x68 nokia5110.o
- .debug_ranges  0x00000000       0x78 nokia5110.o
- .debug_line    0x00000000      0x3dd nokia5110.o
- .debug_str     0x00000000      0x2fc nokia5110.o
- .comment       0x00000000       0x31 nokia5110.o
- .debug_frame   0x00000000      0x130 nokia5110.o
  .text          0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_udivmodqi4.o)
  .data          0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_udivmodqi4.o)
  .bss           0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_udivmodqi4.o)
@@ -271,9 +214,7 @@ Linker script and memory map
 
 Address of section .data set to 0x800100
 LOAD D:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/ATmega_DFP/1.3.300/gcc/dev/atmega1284/avr51/crtatmega1284.o
-LOAD joystick.o
 LOAD main.o
-LOAD matrix_write.o
 LOAD nokia5110.o
 START GROUP
 LOAD d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr51\libm.a
@@ -382,7 +323,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x8e4
+.text           0x00000000      0x83a
  *(.vectors)
  .vectors       0x00000000       0x8c D:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/ATmega_DFP/1.3.300/gcc/dev/atmega1284/avr51/crtatmega1284.o
                 0x00000000                __vector_default
@@ -439,89 +380,92 @@ END GROUP
  *(.init8)
  *(.init8)
  *(.init9)
- .init9         0x000000d4        0x8 D:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/ATmega_DFP/1.3.300/gcc/dev/atmega1284/avr51/crtatmega1284.o
+ .init9         0x000000d4        0x4 D:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/ATmega_DFP/1.3.300/gcc/dev/atmega1284/avr51/crtatmega1284.o
  *(.init9)
  *(.text)
- .text          0x000000dc        0x4 D:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/ATmega_DFP/1.3.300/gcc/dev/atmega1284/avr51/crtatmega1284.o
-                0x000000dc                __vector_22
-                0x000000dc                __vector_28
-                0x000000dc                __vector_1
-                0x000000dc                __vector_32
-                0x000000dc                __vector_34
-                0x000000dc                __vector_24
-                0x000000dc                __vector_12
-                0x000000dc                __bad_interrupt
-                0x000000dc                __vector_6
-                0x000000dc                __vector_31
-                0x000000dc                __vector_3
-                0x000000dc                __vector_23
-                0x000000dc                __vector_30
-                0x000000dc                __vector_25
-                0x000000dc                __vector_11
-                0x000000dc                __vector_17
-                0x000000dc                __vector_19
-                0x000000dc                __vector_7
-                0x000000dc                __vector_27
-                0x000000dc                __vector_5
-                0x000000dc                __vector_33
-                0x000000dc                __vector_4
-                0x000000dc                __vector_9
-                0x000000dc                __vector_2
-                0x000000dc                __vector_21
-                0x000000dc                __vector_15
-                0x000000dc                __vector_29
-                0x000000dc                __vector_8
-                0x000000dc                __vector_26
-                0x000000dc                __vector_14
-                0x000000dc                __vector_10
-                0x000000dc                __vector_16
-                0x000000dc                __vector_18
-                0x000000dc                __vector_20
-                0x000000e0                . = ALIGN (0x2)
+ .text          0x000000d8        0x2 D:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/ATmega_DFP/1.3.300/gcc/dev/atmega1284/avr51/crtatmega1284.o
+                0x000000d8                __vector_22
+                0x000000d8                __vector_28
+                0x000000d8                __vector_1
+                0x000000d8                __vector_32
+                0x000000d8                __vector_34
+                0x000000d8                __vector_24
+                0x000000d8                __vector_12
+                0x000000d8                __bad_interrupt
+                0x000000d8                __vector_6
+                0x000000d8                __vector_31
+                0x000000d8                __vector_3
+                0x000000d8                __vector_23
+                0x000000d8                __vector_30
+                0x000000d8                __vector_25
+                0x000000d8                __vector_11
+                0x000000d8                __vector_17
+                0x000000d8                __vector_19
+                0x000000d8                __vector_7
+                0x000000d8                __vector_27
+                0x000000d8                __vector_5
+                0x000000d8                __vector_33
+                0x000000d8                __vector_4
+                0x000000d8                __vector_9
+                0x000000d8                __vector_2
+                0x000000d8                __vector_21
+                0x000000d8                __vector_15
+                0x000000d8                __vector_29
+                0x000000d8                __vector_8
+                0x000000d8                __vector_26
+                0x000000d8                __vector_14
+                0x000000d8                __vector_10
+                0x000000d8                __vector_16
+                0x000000d8                __vector_18
+                0x000000d8                __vector_20
+                0x000000da                . = ALIGN (0x2)
  *(.text.*)
- .text.write    0x000000e0       0x3c main.o
- .text.write_cmd
-                0x0000011c        0x8 main.o
  .text.SM1_Menu
-                0x00000124       0x22 main.o
-                0x00000124                SM1_Menu
- .text.ADC_init
-                0x00000146       0x16 main.o
- .text.readADC  0x0000015c       0x22 main.o
- .text.joys_tick
-                0x0000017e       0xce main.o
- .text.nokia_lcd_init
-                0x0000024c       0x82 main.o
-                0x0000024c                nokia_lcd_init
- .text.nokia_lcd_clear
-                0x000002ce       0x26 main.o
-                0x000002ce                nokia_lcd_clear
- .text.TimerSet
-                0x000002f4       0x22 main.o
-                0x000002f4                TimerSet
- .text.TimerOn  0x00000316       0x48 main.o
-                0x00000316                TimerOn
- .text.__vector_13
-                0x0000035e       0x78 main.o
-                0x0000035e                __vector_13
+                0x000000da       0x22 main.o
+                0x000000da                SM1_Menu
  .text.transmit_data
-                0x000003d6       0xd2 main.o
-                0x000003d6                transmit_data
+                0x000000fc       0xd2 main.o
+                0x000000fc                transmit_data
  .text.pulseLED
-                0x000004a8       0x20 main.o
-                0x000004a8                pulseLED
+                0x000001ce       0x1a main.o
+                0x000001ce                pulseLED
  .text.SM2_MatrixDisplay
-                0x000004c8      0x2f2 main.o
-                0x000004c8                SM2_MatrixDisplay
- .text.main     0x000007ba      0x114 main.o
-                0x000007ba                main
- .text.libgcc   0x000008ce       0x12 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_tablejump2.o)
-                0x000008ce                __tablejump2__
-                0x000008e0                . = ALIGN (0x2)
+                0x000001e8      0x280 main.o
+                0x000001e8                SM2_MatrixDisplay
+ .text.ADC_init
+                0x00000468       0x16 main.o
+                0x00000468                ADC_init
+ .text.readADC  0x0000047e       0x22 main.o
+                0x0000047e                readADC
+ .text.joys_tick
+                0x000004a0       0xca main.o
+                0x000004a0                joys_tick
+ .text.TimerSet
+                0x0000056a       0x22 main.o
+                0x0000056a                TimerSet
+ .text.TimerOn  0x0000058c       0x48 main.o
+                0x0000058c                TimerOn
+ .text.__vector_13
+                0x000005d4       0x78 main.o
+                0x000005d4                __vector_13
+ .text.main     0x0000064c      0x108 main.o
+                0x0000064c                main
+ .text.write    0x00000754       0x3c nokia5110.o
+ .text.write_cmd
+                0x00000790        0x6 nokia5110.o
+ .text.nokia_lcd_init
+                0x00000796       0x6c nokia5110.o
+                0x00000796                nokia_lcd_init
+ .text.nokia_lcd_clear
+                0x00000802       0x22 nokia5110.o
+                0x00000802                nokia_lcd_clear
+ .text.libgcc   0x00000824       0x12 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_tablejump2.o)
+                0x00000824                __tablejump2__
+                0x00000836                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x000008e0        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
-                0x000008e0                _exit
-                0x000008e0                exit
+ .fini9         0x00000836        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
+                0x00000836                _exit
+                0x00000836                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -540,11 +484,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x000008e0        0x4 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
+ .fini0         0x00000836        0x4 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
  *(.fini0)
-                0x000008e4                _etext = .
+                0x0000083a                _etext = .
 
-.data           0x00800100       0x14 load address 0x000008e4
+.data           0x00800100       0x14 load address 0x0000083a
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -565,9 +509,9 @@ END GROUP
                 0x00800114                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
- .bss.task2.2220
+ .bss.task2.2140
                 0x00800114        0xb main.o
- .bss.task1.2219
+ .bss.task1.2139
                 0x0080011f        0xb main.o
  .bss._avr_timer_cntcurr
                 0x0080012a        0x4 main.o
@@ -576,21 +520,20 @@ END GROUP
                 0x0080012e        0x1 main.o
                 0x0080012e                TimerFlag
  .bss.nokia_lcd
-                0x0080012f      0x1fa main.o
+                0x0080012f      0x1fa nokia5110.o
  *(COMMON)
- COMMON         0x00800329        0x8 joystick.o
-                0x00800329                up
-                0x0080032b                right
-                0x0080032d                left
-                0x0080032f                down
- COMMON         0x00800331       0x9e main.o
-                0x00800331                game_table
-                0x008003b1                prev_blue
-                0x008003b2                ROW_4
-                0x008003b5                SM1_State
-                0x008003b6                ROW_1
-                0x008003b9                ROW_5
-                0x008003bc                winner
+ COMMON         0x00800329       0xa6 main.o
+                0x00800329                game_table
+                0x008003a9                up
+                0x008003ab                prev_blue
+                0x008003ac                ROW_4
+                0x008003af                SM1_State
+                0x008003b0                right
+                0x008003b2                left
+                0x008003b4                ROW_1
+                0x008003b7                ROW_5
+                0x008003ba                winner
+                0x008003bc                down
                 0x008003be                ROW_7
                 0x008003c1                ROW_2
                 0x008003c4                ROW_0
@@ -599,8 +542,8 @@ END GROUP
                 0x008003cb                prev_red
                 0x008003cc                ROW_6
                 0x008003cf                PROVIDE (__bss_end, .)
-                0x000008e4                __data_load_start = LOADADDR (.data)
-                0x000008f8                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x0000083a                __data_load_start = LOADADDR (.data)
+                0x0000084e                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x008003cf        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
@@ -648,9 +591,9 @@ END GROUP
 
 .comment        0x00000000       0x30
  *(.comment)
- .comment       0x00000000       0x30 joystick.o
+ .comment       0x00000000       0x30 main.o
                                  0x31 (size before relaxing)
- .comment       0x00000030       0x31 main.o
+ .comment       0x00000030       0x31 nokia5110.o
 
 .note.gnu.avr.deviceinfo
                 0x00000000       0x40
@@ -672,51 +615,51 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0x170
+.debug_aranges  0x00000000      0x160
  *(.debug_aranges)
  .debug_aranges
-                0x00000000       0x38 joystick.o
+                0x00000000       0xf8 main.o
  .debug_aranges
-                0x00000038      0x138 main.o
+                0x000000f8       0x68 nokia5110.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x2159
+.debug_info     0x00000000     0x1fe4
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x792 D:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/ATmega_DFP/1.3.300/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_info    0x00000792      0x19b joystick.o
- .debug_info    0x0000092d     0x182c main.o
+ .debug_info    0x00000792     0x1268 main.o
+ .debug_info    0x000019fa      0x5ea nokia5110.o
 
-.debug_abbrev   0x00000000      0xc1e
+.debug_abbrev   0x00000000      0xcc4
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x729 D:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/ATmega_DFP/1.3.300/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_abbrev  0x00000729       0xf0 joystick.o
- .debug_abbrev  0x00000819      0x405 main.o
+ .debug_abbrev  0x00000729      0x3b5 main.o
+ .debug_abbrev  0x00000ade      0x1e6 nokia5110.o
 
-.debug_line     0x00000000     0x11a7
+.debug_line     0x00000000     0x1110
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x169 D:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/ATmega_DFP/1.3.300/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_line    0x00000169      0x1a9 joystick.o
- .debug_line    0x00000312      0xe95 main.o
+ .debug_line    0x00000169      0xbca main.o
+ .debug_line    0x00000d33      0x3dd nokia5110.o
 
-.debug_frame    0x00000000      0x400
+.debug_frame    0x00000000      0x3c8
  *(.debug_frame)
- .debug_frame   0x00000000       0x60 joystick.o
- .debug_frame   0x00000060      0x3a0 main.o
+ .debug_frame   0x00000000      0x298 main.o
+ .debug_frame   0x00000298      0x130 nokia5110.o
 
-.debug_str      0x00000000      0x8d2
+.debug_str      0x00000000      0x8d3
  *(.debug_str)
  .debug_str     0x00000000      0x296 D:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/ATmega_DFP/1.3.300/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_str     0x00000296      0x1ae joystick.o
-                                0x1e7 (size before relaxing)
- .debug_str     0x00000444      0x48e main.o
-                                0x681 (size before relaxing)
+ .debug_str     0x00000296      0x4f5 main.o
+                                0x544 (size before relaxing)
+ .debug_str     0x0000078b      0x148 nokia5110.o
+                                0x2fc (size before relaxing)
 
-.debug_loc      0x00000000     0x12db
+.debug_loc      0x00000000     0x10c1
  *(.debug_loc)
- .debug_loc     0x00000000      0x12d joystick.o
- .debug_loc     0x0000012d     0x11ae main.o
+ .debug_loc     0x00000000      0xb68 main.o
+ .debug_loc     0x00000b68      0x559 nokia5110.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -736,10 +679,10 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000      0x1d0
+.debug_ranges   0x00000000      0x1c0
  *(.debug_ranges)
- .debug_ranges  0x00000000       0x28 joystick.o
- .debug_ranges  0x00000028      0x1a8 main.o
+ .debug_ranges  0x00000000      0x148 main.o
+ .debug_ranges  0x00000148       0x78 nokia5110.o
 
 .debug_macro
  *(.debug_macro)

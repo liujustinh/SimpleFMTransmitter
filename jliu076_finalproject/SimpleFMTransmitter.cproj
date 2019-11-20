@@ -28,6 +28,18 @@
     <ResetRule>0</ResetRule>
     <eraseonlaunchrule>0</eraseonlaunchrule>
     <EraseKey />
+    <AsfFrameworkConfig>
+      <framework-data xmlns="">
+  <options />
+  <configurations />
+  <files />
+  <documentation help="" />
+  <offline-documentation help="" />
+  <dependencies>
+    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.40.0" />
+  </dependencies>
+</framework-data>
+    </AsfFrameworkConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -113,13 +125,13 @@
     <Compile Include="bit.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="joystick.c">
+    <Compile Include="joystick.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="matrix_write.c">
+    <Compile Include="matrix_write.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="nokia5110.c">
