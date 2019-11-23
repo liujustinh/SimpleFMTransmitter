@@ -16,19 +16,96 @@
 #include "tasks.h"
 #include "rows.h"
 
+#define START (~PINA & 0x04)
 
+unsigned int mode = 0; 
 ///////STATE MACHINE 1: User menu interface/////////
-enum SM1_States {SM1_Init, SM1_Wait, SM1_Start} SM1_State;
+enum SM1_States {SM1_Init, SM1_Wait1, SM1_Wait2, SM1_Wait3, SM1_Start} SM1_State;
 int SM1_Menu(int SM1_State) {
 	switch(SM1_State) {
 		case -1: 
 			SM1_State = SM1_Init; 
 			break; 
 		case SM1_Init:
-			SM1_State = SM1_Wait; 
+			SM1_State = SM1_Wait1; 
 			break;   
-		case SM1_Wait:
-		
+		case SM1_Wait1:
+			if (down == true) {
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("FM Transmitter", 1.5);
+				nokia_lcd_set_cursor(5, 15);
+				nokia_lcd_write_string("FM Mode", 1);
+				nokia_lcd_set_cursor(0, 25);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Speaker Mode", 1);
+				nokia_lcd_set_cursor(5, 35);
+				nokia_lcd_write_string("LED Matrix", 1);
+				nokia_lcd_render();
+				SM1_State = SM1_Wait2; 
+			}
+			else if (START) {
+				mode = 1; 
+			}
+			else {
+				SM1_State = SM1_Wait1; 
+			}
+			break; 
+		case SM1_Wait2:
+			if (up == true) {
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("FM Transmitter", 1.5);
+				nokia_lcd_set_cursor(5, 15);
+				nokia_lcd_write_string("FM Mode", 1);
+				nokia_lcd_set_cursor(0, 15);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Speaker Mode", 1);
+				nokia_lcd_set_cursor(5, 35);
+				nokia_lcd_write_string("LED Matrix", 1);
+				nokia_lcd_render();
+				SM1_State = SM1_Wait1; 
+			}
+			else if (down == true) {
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("FM Transmitter", 1.5);
+				nokia_lcd_set_cursor(5, 15);
+				nokia_lcd_write_string("FM Mode", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Speaker Mode", 1);
+				nokia_lcd_set_cursor(5, 35);
+				nokia_lcd_write_string("LED Matrix", 1);
+				nokia_lcd_set_cursor(0, 35);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_render();
+				SM1_State = SM1_Wait3; 
+			}
+			else {
+				SM1_State = SM1_Wait2; 
+			}
+			break; 
+		case SM1_Wait3:
+			if (up == true) {
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("FM Transmitter", 1.5);
+				nokia_lcd_set_cursor(5, 15);
+				nokia_lcd_write_string("FM Mode", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Speaker Mode", 1);
+				nokia_lcd_set_cursor(0, 25);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 35);
+				nokia_lcd_write_string("LED Matrix", 1);
+				nokia_lcd_render();
+				SM1_State = SM1_Wait2;
+			}
+			else {
+				SM1_State = SM1_Wait3; 
+			}
 			break; 
 		default: 
 			SM1_State = -1; 
@@ -37,17 +114,25 @@ int SM1_Menu(int SM1_State) {
 	switch (SM1_State) {
 		case SM1_Init: 
 			nokia_lcd_clear();
-			nokia_lcd_set_cursor(10, 0);
-			nokia_lcd_write_string("Connect 4", 1.5);
-			nokia_lcd_set_cursor(5, 20);
-			nokia_lcd_write_string("Start", 1);
-			nokia_lcd_set_cursor(0, 20);
+			nokia_lcd_set_cursor(0, 0);
+			nokia_lcd_write_string("FM Transmitter", 1.5);
+			nokia_lcd_set_cursor(5, 15);
+			nokia_lcd_write_string("FM Mode", 1);
+			nokia_lcd_set_cursor(0, 15);
 			nokia_lcd_write_string("*", 1);
-			nokia_lcd_set_cursor(5, 30);
-			nokia_lcd_write_string("Options", 1);
+			nokia_lcd_set_cursor(5, 25);
+			nokia_lcd_write_string("Speaker Mode", 1);
+			nokia_lcd_set_cursor(5, 35);
+			nokia_lcd_write_string("LED Matrix", 1);
 			nokia_lcd_render();
 			break; 
-		case SM1_Wait: 
+		case SM1_Wait1: 
+			resetJoystick(); 
+			break; 
+		case SM1_Wait2: 
+			resetJoystick();
+			break; 
+		case SM1_Wait3:
 			resetJoystick(); 
 			break; 
 		case SM1_Start: 
@@ -57,7 +142,7 @@ int SM1_Menu(int SM1_State) {
 	return SM1_State; 
 }
 
-///////INITIALIZE MATRIX COLUMN ROWS//////////
+///////INITIALIZE MATRIX COLUMN / ROWS//////////
 row ROW_0, ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7;
 row *rows[8] = { &ROW_0, &ROW_1, &ROW_2, &ROW_3, &ROW_4, &ROW_5, &ROW_6, &ROW_7};
 	
@@ -193,9 +278,14 @@ int SM2_MatrixDisplay(int SM2_State) {
 
 int main(void)
 {
+	DDRB = 0xFF; PORTB = 0x00; 
     ADC_init();
     nokia_lcd_init();
     nokia_lcd_clear();
+	
+	row_init(rows); 
+	init_gametable();
+	
 	
 	//period for tasks
 	unsigned long int SMTick1_calc = 100;

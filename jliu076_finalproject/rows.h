@@ -56,6 +56,7 @@ void row_init(row** rows) {					//initializes an empty LED matrix to start the g
 		rows[i]->blueRow = 0xFF; 
 		rows[i]->redRow = 0xFF; 
 	}
+	//rows[0]->blueRow = 0xEF; 
 	rows[0]->col = 0x01; 
 	rows[1]->col = 0x02; 
 	rows[2]->col = 0x04; 

@@ -41,7 +41,7 @@ void Wait()
 void transmit_data(unsigned int port, unsigned char data) {
 	int i;
 	
-	if (port == red) {
+	if (port == blue) {
 		for (i = 0; i < 8 ; ++i) {
 			// Sets SRCLR to 1 allowing data to be set
 			// Also clears SRCLK in preparation of sending data
@@ -72,7 +72,7 @@ void transmit_data(unsigned int port, unsigned char data) {
 		// clears all lines in preparation of a new transmission
 		PORTC &= 0x0F; 
 	}
-	else if (port == blue) {
+	else if (port == red) {
 		for (i = 0; i < 8 ; ++i) {
 			// Sets SRCLR to 1 allowing data to be set
 			// Also clears SRCLK in preparation of sending data
