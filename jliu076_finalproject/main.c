@@ -4,7 +4,7 @@
 //////////////////////////SimpleFMTransmitter////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-#include <avr/interrupt.h>
+//#include <avr/interrupt.h>
 #include <avr/common.h>
 #include <avr/io.h>
 
@@ -15,6 +15,8 @@
 #include "timer.h"
 #include "tasks.h"
 #include "rows.h"
+//#include "usart_ATmega1284.h"
+#include "spi.h"
 
 #define START (~PINA & 0x04)
 
@@ -276,12 +278,54 @@ int SM2_MatrixDisplay(int SM2_State) {
 	return SM2_State;
 }
 
+///////STATE MACHINE 3: Raspberry Pi Communication via USART/////////
+enum SM3_States {SM3_Init, SM3_Wait, SM3_Test} SM3_State;
+int SM3_PiInterface(int SM3_State) {
+	switch(SM3_State) {
+		case -1:
+			SM3_State = SM3_Init;
+			break;
+		case SM3_Init:
+			SM3_State = SM3_Wait; 
+			break; 
+		case SM3_Wait:
+			if (receivedData != 0x00) {
+				nokia_lcd_clear();
+				SM3_State = SM3_Test; 
+			}
+			else {
+				SM3_State = SM3_Wait;
+			}
+			break;
+		case SM3_Test:
+			SM3_State = SM3_Wait; 
+			break; 
+		default: 
+			SM3_State = -1;
+			break; 
+	}
+	switch(SM3_State) {
+		case SM3_Init: 
+			break; 
+		case SM3_Wait: 
+			break; 
+		case SM3_Test:
+			//PORTD = SetBit(PORTD, 6, 1); 
+			PORTD |= 0x40; 
+			//nokia_lcd_clear(); 
+			break; 
+	}
+	return SM3_State; 
+}
+
 int main(void)
 {
 	DDRB = 0xFF; PORTB = 0x00; 
+	DDRD = 0xFF; PORTD = 0x00;
     ADC_init();
     nokia_lcd_init();
     nokia_lcd_clear();
+	SPI_SlaveInit(); 
 	
 	row_init(rows); 
 	init_gametable();
@@ -290,17 +334,20 @@ int main(void)
 	//period for tasks
 	unsigned long int SMTick1_calc = 100;
 	unsigned long int SMTick2_calc = 1;
+	unsigned long int SMTick3_calc = 5; 
 	
 	//GCD
 	unsigned long int tmpGCD = 1;
-	tmpGCD = findGCD(SMTick1_calc, SMTick2_calc );
+	tmpGCD = findGCD(SMTick1_calc, SMTick2_calc);
+	tmpGCD = findGCD(tmpGCD, SMTick3_calc);
 	unsigned long int GCD = tmpGCD;
 	
 	unsigned long int SMTick1_period = SMTick1_calc/GCD;
 	unsigned long int SMTick2_period = SMTick2_calc/GCD;
+	unsigned long int SMTick3_period = SMTick3_calc/GCD;
 	
-	static task task1, task2;
-	task *tasks[] = {&task1, &task2};
+	static task task1, task2, task3;
+	task *tasks[] = {&task1, &task2, &task3};
 	const unsigned short numTasks = sizeof(tasks)/sizeof(task*);
 	
 	//task1
@@ -315,12 +362,22 @@ int main(void)
 	task2.elapsedTime = SMTick2_period;//Task current elapsed time.
 	task2.TickFct = &SM2_MatrixDisplay;//Function pointer for the tick.
 	
+	//task3
+	task3.state = -1;//Task initial state.
+	task3.period = SMTick3_period;//Task Period.
+	task3.elapsedTime = SMTick3_period;//Task current elapsed time.
+	task3.TickFct = &SM3_PiInterface;//Function pointer for the tick.
+	
 	TimerSet(GCD);
 	TimerOn();
 	
     while(1)
     {
 		joys_tick(); 
+		if (receivedData != 0x00) {
+			PORTD |= 0x40; 
+			//nokia_lcd_clear();
+		}
 	    for (int i = 0; i < numTasks; i++ ) {
 		    if ( tasks[i]->elapsedTime == tasks[i]->period ) {
 			    tasks[i]->state = tasks[i]->TickFct(tasks[i]->state);

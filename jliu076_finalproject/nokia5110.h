@@ -20,8 +20,8 @@
 /*
  * LCD's port
  */
-#define PORT_LCD PORTB
-#define DDR_LCD DDRB
+#define PORT_LCD PORTD
+#define DDR_LCD DDRD
 
 /*
  * LCD's pins
