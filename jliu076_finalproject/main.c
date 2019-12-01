@@ -19,7 +19,10 @@
 #include "spi.h"
 
 #define START (~PINA & 0x04)
+#define BT_CONNECTED (~PINB & 0x01)
+#define BT_DISCONNECTED (~PINB & 0x02)
 
+unsigned int bt_paired = 0; 
 unsigned int mode = 0; 
 ///////STATE MACHINE 1: User menu interface/////////
 enum SM1_States {SM1_Init, SM1_Wait1, SM1_Wait2, SM1_Wait3, SM1_Start} SM1_State;
@@ -32,12 +35,44 @@ int SM1_Menu(int SM1_State) {
 			SM1_State = SM1_Wait1; 
 			break;   
 		case SM1_Wait1:
+			//if (BT_CONNECTED) {
+				//nokia_lcd_clear();
+				//nokia_lcd_set_cursor(0, 0);
+				//nokia_lcd_write_string("FM Transmitter", 1.5);
+				//nokia_lcd_set_cursor(5, 15);
+				//nokia_lcd_write_string("Paired", 0.75);
+				//nokia_lcd_set_cursor(0, 25);
+				//nokia_lcd_write_string("*", 1);
+				//nokia_lcd_set_cursor(5, 25);
+				//nokia_lcd_write_string("Speaker Mode", 1);
+				//nokia_lcd_set_cursor(5, 35);
+				//nokia_lcd_write_string("LED Matrix", 1);
+				//nokia_lcd_render();
+			//}
 			if (down == true) {
 				nokia_lcd_clear();
 				nokia_lcd_set_cursor(0, 0);
 				nokia_lcd_write_string("FM Transmitter", 1.5);
-				nokia_lcd_set_cursor(5, 15);
-				nokia_lcd_write_string("FM Mode", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Speaker Mode", 1);
+				nokia_lcd_set_cursor(0, 35);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 35);
+				nokia_lcd_write_string("LED Matrix", 1);
+				if (bt_paired == 1) {
+					nokia_lcd_set_cursor(20, 9);
+					nokia_lcd_write_string("Paired", 1);
+				}
+				nokia_lcd_render();
+				SM1_State = SM1_Wait2; 
+			}
+			else if (BT_CONNECTED) {
+				bt_paired = 1; 
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("FM Transmitter", 1.5);
+				nokia_lcd_set_cursor(20, 9);
+				nokia_lcd_write_string("Paired", 1);
 				nokia_lcd_set_cursor(0, 25);
 				nokia_lcd_write_string("*", 1);
 				nokia_lcd_set_cursor(5, 25);
@@ -45,46 +80,107 @@ int SM1_Menu(int SM1_State) {
 				nokia_lcd_set_cursor(5, 35);
 				nokia_lcd_write_string("LED Matrix", 1);
 				nokia_lcd_render();
-				SM1_State = SM1_Wait2; 
+				SM1_State = SM1_Wait1; 
+			}
+			else if (BT_DISCONNECTED) {
+				bt_paired = 0;
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("FM Transmitter", 1.5);
+				nokia_lcd_set_cursor(0, 25);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Speaker Mode", 1);
+				nokia_lcd_set_cursor(5, 35);
+				nokia_lcd_write_string("LED Matrix", 1);
+				nokia_lcd_render();
+				SM1_State = SM1_Wait1;
 			}
 			else if (START) {
 				mode = 1; 
+				SM1_State = SM1_Wait1; 
 			}
 			else {
 				SM1_State = SM1_Wait1; 
 			}
 			break; 
 		case SM1_Wait2:
+			//if (BT_CONNECTED) {
+				//nokia_lcd_clear();
+				//nokia_lcd_set_cursor(0, 0);
+				//nokia_lcd_write_string("FM Transmitter", 1.5);
+				//nokia_lcd_set_cursor(5, 15);
+				//nokia_lcd_write_string("Paired", 0.75);
+				//nokia_lcd_set_cursor(5, 25);
+				//nokia_lcd_write_string("Speaker Mode", 1);
+				//nokia_lcd_set_cursor(0, 35);
+				//nokia_lcd_write_string("*", 1);
+				//nokia_lcd_set_cursor(5, 35);
+				//nokia_lcd_write_string("LED Matrix", 1);
+				//nokia_lcd_render();
+			//}
 			if (up == true) {
 				nokia_lcd_clear();
 				nokia_lcd_set_cursor(0, 0);
 				nokia_lcd_write_string("FM Transmitter", 1.5);
-				nokia_lcd_set_cursor(5, 15);
-				nokia_lcd_write_string("FM Mode", 1);
-				nokia_lcd_set_cursor(0, 15);
+				nokia_lcd_set_cursor(0, 25);
 				nokia_lcd_write_string("*", 1);
 				nokia_lcd_set_cursor(5, 25);
 				nokia_lcd_write_string("Speaker Mode", 1);
 				nokia_lcd_set_cursor(5, 35);
 				nokia_lcd_write_string("LED Matrix", 1);
+				if (bt_paired == 1) {
+					nokia_lcd_set_cursor(20, 9);
+					nokia_lcd_write_string("Paired", 1);
+				}
 				nokia_lcd_render();
 				SM1_State = SM1_Wait1; 
 			}
-			else if (down == true) {
+			else if (BT_CONNECTED) {
+				bt_paired = 1;
 				nokia_lcd_clear();
 				nokia_lcd_set_cursor(0, 0);
 				nokia_lcd_write_string("FM Transmitter", 1.5);
-				nokia_lcd_set_cursor(5, 15);
-				nokia_lcd_write_string("FM Mode", 1);
+				nokia_lcd_set_cursor(20, 9);
+				nokia_lcd_write_string("Paired", 1);
 				nokia_lcd_set_cursor(5, 25);
 				nokia_lcd_write_string("Speaker Mode", 1);
-				nokia_lcd_set_cursor(5, 35);
-				nokia_lcd_write_string("LED Matrix", 1);
 				nokia_lcd_set_cursor(0, 35);
 				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 35);
+				nokia_lcd_write_string("LED Matrix", 1);
 				nokia_lcd_render();
-				SM1_State = SM1_Wait3; 
+				SM1_State = SM1_Wait2; 
 			}
+			else if (BT_DISCONNECTED) {
+				bt_paired = 0;
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("FM Transmitter", 1.5);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Speaker Mode", 1);
+				nokia_lcd_set_cursor(0, 35);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 35);
+				nokia_lcd_write_string("LED Matrix", 1);
+				nokia_lcd_render();
+				SM1_State = SM1_Wait2;
+			}
+			//else if (down == true) {
+				//nokia_lcd_clear();
+				//nokia_lcd_set_cursor(0, 0);
+				//nokia_lcd_write_string("FM Transmitter", 1.5);
+				//nokia_lcd_set_cursor(5, 15);
+				//nokia_lcd_write_string("FM Mode", 1);
+				//nokia_lcd_set_cursor(5, 25);
+				//nokia_lcd_write_string("Speaker Mode", 1);
+				//nokia_lcd_set_cursor(5, 35);
+				//nokia_lcd_write_string("LED Matrix", 1);
+				//nokia_lcd_set_cursor(0, 35);
+				//nokia_lcd_write_string("*", 1);
+				//nokia_lcd_render();
+				//SM1_State = SM1_Wait3; 
+			//}
 			else {
 				SM1_State = SM1_Wait2; 
 			}
@@ -94,8 +190,6 @@ int SM1_Menu(int SM1_State) {
 				nokia_lcd_clear();
 				nokia_lcd_set_cursor(0, 0);
 				nokia_lcd_write_string("FM Transmitter", 1.5);
-				nokia_lcd_set_cursor(5, 15);
-				nokia_lcd_write_string("FM Mode", 1);
 				nokia_lcd_set_cursor(5, 25);
 				nokia_lcd_write_string("Speaker Mode", 1);
 				nokia_lcd_set_cursor(0, 25);
@@ -118,9 +212,9 @@ int SM1_Menu(int SM1_State) {
 			nokia_lcd_clear();
 			nokia_lcd_set_cursor(0, 0);
 			nokia_lcd_write_string("FM Transmitter", 1.5);
-			nokia_lcd_set_cursor(5, 15);
-			nokia_lcd_write_string("FM Mode", 1);
-			nokia_lcd_set_cursor(0, 15);
+			//nokia_lcd_set_cursor(5, 15);
+			//nokia_lcd_write_string("FM Mode", 1);
+			nokia_lcd_set_cursor(0, 25);
 			nokia_lcd_write_string("*", 1);
 			nokia_lcd_set_cursor(5, 25);
 			nokia_lcd_write_string("Speaker Mode", 1);
@@ -320,7 +414,7 @@ int SM3_PiInterface(int SM3_State) {
 
 int main(void)
 {
-	DDRB = 0xFF; PORTB = 0x00; 
+	DDRB = 0x00; PORTB = 0xFF; 
 	DDRD = 0xFF; PORTD = 0x00;
     ADC_init();
     nokia_lcd_init();
@@ -389,4 +483,3 @@ int main(void)
 	    TimerFlag = 0;
     }
 }
-

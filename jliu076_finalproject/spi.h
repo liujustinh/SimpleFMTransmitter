@@ -25,14 +25,22 @@ char* integer_to_string(int x)
 
 void SPI_SlaveInit(void) {
 	DDRB = 0x40; PORTB = 0xBF;
-	SPCR |= (1<<SPE)|(1<<SPIE);
+	SPCR |= (1<<SPIE)|(1<<SPE);
 	SREG |= 0x80;
 	//sei();
+}
+
+void SPI_ServantTransmit(unsigned char cData){
+	SPDR = cData;
+	while(!(SPSR & (1 <<SPIF))){
+
+	};
 }
 
 ISR(SPI_STC_vect){
 	receivedData = SPDR;
 	PORTD |= 0x40;
+	SPI_ServantTransmit(0xFF); 
 }
 
 
