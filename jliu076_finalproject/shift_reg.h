@@ -1,3 +1,20 @@
+/*
+ * matrix_write.h
+ *
+ * Created: 11/19/2019 4:44:45 PM
+ *  Author: Justin
+ */ 
+
+
+#ifndef SHIFT_REG_H_
+#define SHIFT_REG_H_
+/*
+ * sr_test.c
+ *
+ * Created: 6/1/2018 11:38:37 PM
+ *  Author: Justin
+ */ 
+
 #include <avr/io.h>
 #include <util/delay.h>
 
@@ -5,6 +22,21 @@
 #define red 2 
 #define column 3 
 
+unsigned char shiftLeft(unsigned char x) {
+	return (x << 1) | (x >> (8 - 1));
+}
+
+unsigned char shiftRight(unsigned char x) {
+	return (x >> 1) | (x << (8 - 1));
+}
+
+unsigned char expandLeft(unsigned char x) {
+	return x & ((x << 1) | (x >> (8 - 1)));
+}
+
+unsigned char expandRight(unsigned char x) {
+	return x & ((x >> 1) | (x << (8 - 1)));
+}
 
 void Wait()
 {
@@ -17,7 +49,7 @@ void Wait()
 void transmit_data(unsigned int port, unsigned char data) {
 	int i;
 	
-	if (port == red) {
+	if (port == blue) {
 		for (i = 0; i < 8 ; ++i) {
 			// Sets SRCLR to 1 allowing data to be set
 			// Also clears SRCLK in preparation of sending data
@@ -39,7 +71,7 @@ void transmit_data(unsigned int port, unsigned char data) {
 			PORTC = 0x80;
 			// set SER = next bit of data to be sent.
 			//PORTC |= ((data >> i) & 0x10);		//0x7F = 0111 1111 
-			PORTC = SetBit(PORTC, 4, GetBit(data, i)); 
+			PORTC |= SetBit(PORTC, 4, GetBit(data, i)); 
 			// set SRCLK = 1. Rising edge shifts next bit of data into the shift register
 			PORTC |= 0x20;
 		}
@@ -48,14 +80,14 @@ void transmit_data(unsigned int port, unsigned char data) {
 		// clears all lines in preparation of a new transmission
 		PORTC &= 0x0F; 
 	}
-	else if (port == blue) {
+	else if (port == red) {
 		for (i = 0; i < 8 ; ++i) {
 			// Sets SRCLR to 1 allowing data to be set
 			// Also clears SRCLK in preparation of sending data
-			PORTA = 0x80;
+			PORTA |= 0x80;
 			// set SER = next bit of data to be sent.
 			//PORTC |= ((data >> i) & 0x10);		//0x7F = 0111 1111
-			PORTA = SetBit(PORTA, 4, GetBit(data, i));
+			PORTA |= SetBit(PORTA, 4, GetBit(data, i));
 			// set SRCLK = 1. Rising edge shifts next bit of data into the shift register
 			PORTA |= 0x20;
 		}
@@ -71,3 +103,5 @@ void pulseLED() {
 	transmit_data(blue, 0xFF);
 	transmit_data(red, 0xFF);
 }
+
+#endif

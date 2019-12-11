@@ -18,14 +18,26 @@
 //#include "usart_ATmega1284.h"
 #include "spi.h"
 
-#define START (~PINA & 0x04)
+#define START (~PINB & 0x08)
+#define BACK (~PINB & 0x10)
 #define BT_CONNECTED (~PINB & 0x01)
 #define BT_DISCONNECTED (~PINB & 0x02)
+#define BT_READY (~PINB & 0x04)
 
+unsigned int bt_ready = 0;
 unsigned int bt_paired = 0; 
 unsigned int mode = 0; 
+unsigned int led_matrix_on = 1; 
+unsigned short test_value; 
+unsigned int led_matrix_color = 1; //blue = 1, red = 2
+
+///////INITIALIZE MATRIX COLUMN / ROWS//////////
+row ROW_0, ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7;
+row *rows[8] = { &ROW_0, &ROW_1, &ROW_2, &ROW_3, &ROW_4, &ROW_5, &ROW_6, &ROW_7};
+	
+	
 ///////STATE MACHINE 1: User menu interface/////////
-enum SM1_States {SM1_Init, SM1_Wait1, SM1_Wait2, SM1_Wait3, SM1_Start} SM1_State;
+enum SM1_States {SM1_Init, SM1_Wait1, SM1_Wait2, SM1_Wait3, SM1_Start, SM1_LEDMenu1, SM1_LEDMenu2} SM1_State;
 int SM1_Menu(int SM1_State) {
 	switch(SM1_State) {
 		case -1: 
@@ -35,24 +47,12 @@ int SM1_Menu(int SM1_State) {
 			SM1_State = SM1_Wait1; 
 			break;   
 		case SM1_Wait1:
-			//if (BT_CONNECTED) {
-				//nokia_lcd_clear();
-				//nokia_lcd_set_cursor(0, 0);
-				//nokia_lcd_write_string("FM Transmitter", 1.5);
-				//nokia_lcd_set_cursor(5, 15);
-				//nokia_lcd_write_string("Paired", 0.75);
-				//nokia_lcd_set_cursor(0, 25);
-				//nokia_lcd_write_string("*", 1);
-				//nokia_lcd_set_cursor(5, 25);
-				//nokia_lcd_write_string("Speaker Mode", 1);
-				//nokia_lcd_set_cursor(5, 35);
-				//nokia_lcd_write_string("LED Matrix", 1);
-				//nokia_lcd_render();
-			//}
 			if (down == true) {
 				nokia_lcd_clear();
+				//nokia_lcd_set_cursor(0, 15);
+				//nokia_lcd_write_string(integer_to_string(test_value), 1);
 				nokia_lcd_set_cursor(0, 0);
-				nokia_lcd_write_string("FM Transmitter", 1.5);
+				nokia_lcd_write_string("SimpleBTPlayer", 1.5);
 				nokia_lcd_set_cursor(5, 25);
 				nokia_lcd_write_string("Speaker Mode", 1);
 				nokia_lcd_set_cursor(0, 35);
@@ -63,14 +63,34 @@ int SM1_Menu(int SM1_State) {
 					nokia_lcd_set_cursor(20, 9);
 					nokia_lcd_write_string("Paired", 1);
 				}
+				else if (bt_ready == 1) {
+					nokia_lcd_set_cursor(3, 9);
+					nokia_lcd_write_string("Ready to pair!", 1);
+				}
 				nokia_lcd_render();
 				SM1_State = SM1_Wait2; 
+			}
+			else if (BT_READY) {
+				bt_ready = 1; 
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("SimpleBTPlayer", 1.5);
+				nokia_lcd_set_cursor(3, 9);
+				nokia_lcd_write_string("Ready to pair!", 1);
+				nokia_lcd_set_cursor(0, 25);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Speaker Mode", 1);
+				nokia_lcd_set_cursor(5, 35);
+				nokia_lcd_write_string("LED Matrix", 1);
+				nokia_lcd_render();
+				SM1_State = SM1_Wait1;
 			}
 			else if (BT_CONNECTED) {
 				bt_paired = 1; 
 				nokia_lcd_clear();
 				nokia_lcd_set_cursor(0, 0);
-				nokia_lcd_write_string("FM Transmitter", 1.5);
+				nokia_lcd_write_string("SimpleBTPlayer", 1.5);
 				nokia_lcd_set_cursor(20, 9);
 				nokia_lcd_write_string("Paired", 1);
 				nokia_lcd_set_cursor(0, 25);
@@ -86,7 +106,9 @@ int SM1_Menu(int SM1_State) {
 				bt_paired = 0;
 				nokia_lcd_clear();
 				nokia_lcd_set_cursor(0, 0);
-				nokia_lcd_write_string("FM Transmitter", 1.5);
+				nokia_lcd_write_string("SimpleBTPlayer", 1.5);
+				nokia_lcd_set_cursor(3, 9);
+				nokia_lcd_write_string("Ready to pair!", 1);
 				nokia_lcd_set_cursor(0, 25);
 				nokia_lcd_write_string("*", 1);
 				nokia_lcd_set_cursor(5, 25);
@@ -101,6 +123,18 @@ int SM1_Menu(int SM1_State) {
 				SM1_State = SM1_Wait1; 
 			}
 			else {
+				//nokia_lcd_clear();
+				//nokia_lcd_set_cursor(0, 0);
+				//nokia_lcd_write_string("SimpleBTPlayer", 1.5);
+				//nokia_lcd_set_cursor(0, 15);
+				//nokia_lcd_write_string(integer_to_string(cur_mic_value), 1);
+				//nokia_lcd_set_cursor(0, 25);
+				//nokia_lcd_write_string("*", 1);
+				//nokia_lcd_set_cursor(5, 25);
+				//nokia_lcd_write_string("Speaker Mode", 1);
+				//nokia_lcd_set_cursor(5, 35);
+				//nokia_lcd_write_string("LED Matrix", 1);
+				//nokia_lcd_render();
 				SM1_State = SM1_Wait1; 
 			}
 			break; 
@@ -108,7 +142,7 @@ int SM1_Menu(int SM1_State) {
 			//if (BT_CONNECTED) {
 				//nokia_lcd_clear();
 				//nokia_lcd_set_cursor(0, 0);
-				//nokia_lcd_write_string("FM Transmitter", 1.5);
+				//nokia_lcd_write_string("SimpleBTPlayer", 1.5);
 				//nokia_lcd_set_cursor(5, 15);
 				//nokia_lcd_write_string("Paired", 0.75);
 				//nokia_lcd_set_cursor(5, 25);
@@ -122,7 +156,9 @@ int SM1_Menu(int SM1_State) {
 			if (up == true) {
 				nokia_lcd_clear();
 				nokia_lcd_set_cursor(0, 0);
-				nokia_lcd_write_string("FM Transmitter", 1.5);
+				nokia_lcd_write_string("SimpleBTPlayer", 1.5);
+				//nokia_lcd_set_cursor(0, 15);
+				//nokia_lcd_write_string(integer_to_string(cur_mic_value), 1);
 				nokia_lcd_set_cursor(0, 25);
 				nokia_lcd_write_string("*", 1);
 				nokia_lcd_set_cursor(5, 25);
@@ -133,14 +169,34 @@ int SM1_Menu(int SM1_State) {
 					nokia_lcd_set_cursor(20, 9);
 					nokia_lcd_write_string("Paired", 1);
 				}
+				else if (bt_ready == 1) {
+					nokia_lcd_set_cursor(3, 9);
+					nokia_lcd_write_string("Ready to pair!", 1);
+				}
 				nokia_lcd_render();
 				SM1_State = SM1_Wait1; 
+			}
+			else if (BT_READY) {
+				bt_ready = 1; 
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("SimpleBTPlayer", 1.5);
+				nokia_lcd_set_cursor(3, 9);
+				nokia_lcd_write_string("Ready to pair!", 1);
+				nokia_lcd_set_cursor(0, 35);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Speaker Mode", 1);
+				nokia_lcd_set_cursor(5, 35);
+				nokia_lcd_write_string("LED Matrix", 1);
+				nokia_lcd_render();
+				SM1_State = SM1_Wait1;
 			}
 			else if (BT_CONNECTED) {
 				bt_paired = 1;
 				nokia_lcd_clear();
 				nokia_lcd_set_cursor(0, 0);
-				nokia_lcd_write_string("FM Transmitter", 1.5);
+				nokia_lcd_write_string("SimpleBTPlayer", 1.5);
 				nokia_lcd_set_cursor(20, 9);
 				nokia_lcd_write_string("Paired", 1);
 				nokia_lcd_set_cursor(5, 25);
@@ -156,7 +212,9 @@ int SM1_Menu(int SM1_State) {
 				bt_paired = 0;
 				nokia_lcd_clear();
 				nokia_lcd_set_cursor(0, 0);
-				nokia_lcd_write_string("FM Transmitter", 1.5);
+				nokia_lcd_write_string("SimpleBTPlayer", 1.5);
+				nokia_lcd_set_cursor(3, 9);
+				nokia_lcd_write_string("Ready to pair!", 1);
 				nokia_lcd_set_cursor(5, 25);
 				nokia_lcd_write_string("Speaker Mode", 1);
 				nokia_lcd_set_cursor(0, 35);
@@ -166,10 +224,79 @@ int SM1_Menu(int SM1_State) {
 				nokia_lcd_render();
 				SM1_State = SM1_Wait2;
 			}
+			else if (START) {
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("LED Settings", 1.5);
+				nokia_lcd_set_cursor(5, 15);
+				nokia_lcd_write_string("Power: ", 1);
+				if (led_matrix_on == 1) {
+					nokia_lcd_write_string("On", 1);
+				}
+				else {
+					nokia_lcd_write_string("Off", 1);
+				}
+				nokia_lcd_set_cursor(0, 15);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Color: ", 1);
+				if (led_matrix_color == 1) {
+					nokia_lcd_write_string("Blue", 1);
+				}
+				else if (led_matrix_color == 2) {
+					nokia_lcd_write_string("Red", 1);
+				}
+				nokia_lcd_render();
+				SM1_State = SM1_LEDMenu1; 
+				break;
+				//if (led_matrix_on == 1) {
+					//led_matrix_on = 0; 
+					//nokia_lcd_clear();
+					//nokia_lcd_set_cursor(0, 0);
+					//nokia_lcd_write_string("SimpleBTPlayer", 1.5);
+					//nokia_lcd_set_cursor(5, 25);
+					//nokia_lcd_write_string("Speaker Mode", 1);
+					//nokia_lcd_set_cursor(0, 35);
+					//nokia_lcd_write_string("*", 1);
+					//nokia_lcd_set_cursor(5, 35);
+					//nokia_lcd_write_string("LED Matrix       on", 1);
+					//if (bt_paired == 1) {
+						//nokia_lcd_set_cursor(20, 9);
+						//nokia_lcd_write_string("Paired", 1);
+					//}
+					//else if (bt_ready == 1) {
+						//nokia_lcd_set_cursor(3, 9);
+						//nokia_lcd_write_string("Ready to pair!", 1);
+					//}
+					//nokia_lcd_render();
+				//}
+				//else {
+					//led_matrix_on = 1; 
+					//nokia_lcd_clear();
+					//nokia_lcd_set_cursor(0, 0);
+					//nokia_lcd_write_string("SimpleBTPlayer", 1.5);
+					//nokia_lcd_set_cursor(5, 25);
+					//nokia_lcd_write_string("Speaker Mode", 1);
+					//nokia_lcd_set_cursor(0, 35);
+					//nokia_lcd_write_string("*", 1);
+					//nokia_lcd_set_cursor(5, 35);
+					//nokia_lcd_write_string("LED Matrix       off", 1);
+					//if (bt_paired == 1) {
+						//nokia_lcd_set_cursor(20, 9);
+						//nokia_lcd_write_string("Paired", 1);
+					//}
+					//else if (bt_ready == 1) {
+						//nokia_lcd_set_cursor(3, 9);
+						//nokia_lcd_write_string("Ready to pair!", 1);
+					//}
+					//nokia_lcd_render();
+				//}
+				//SM1_State = SM1_Wait2; 
+			
 			//else if (down == true) {
 				//nokia_lcd_clear();
 				//nokia_lcd_set_cursor(0, 0);
-				//nokia_lcd_write_string("FM Transmitter", 1.5);
+				//nokia_lcd_write_string("SimpleBTPlayer", 1.5);
 				//nokia_lcd_set_cursor(5, 15);
 				//nokia_lcd_write_string("FM Mode", 1);
 				//nokia_lcd_set_cursor(5, 25);
@@ -181,6 +308,7 @@ int SM1_Menu(int SM1_State) {
 				//nokia_lcd_render();
 				//SM1_State = SM1_Wait3; 
 			//}
+			}
 			else {
 				SM1_State = SM1_Wait2; 
 			}
@@ -189,7 +317,7 @@ int SM1_Menu(int SM1_State) {
 			if (up == true) {
 				nokia_lcd_clear();
 				nokia_lcd_set_cursor(0, 0);
-				nokia_lcd_write_string("FM Transmitter", 1.5);
+				nokia_lcd_write_string("SimpleBTPlayer", 1.5);
 				nokia_lcd_set_cursor(5, 25);
 				nokia_lcd_write_string("Speaker Mode", 1);
 				nokia_lcd_set_cursor(0, 25);
@@ -203,6 +331,175 @@ int SM1_Menu(int SM1_State) {
 				SM1_State = SM1_Wait3; 
 			}
 			break; 
+		case SM1_LEDMenu1: 
+			if (down == true) {
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("LED Settings", 1.5);
+				nokia_lcd_set_cursor(5, 15);
+				nokia_lcd_write_string("Power: ", 1);
+				if (led_matrix_on == 1) {
+					nokia_lcd_write_string("On", 1);
+				}
+				else {
+					nokia_lcd_write_string("Off", 1);
+				}
+				nokia_lcd_set_cursor(0, 25);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Color: ", 1);
+				if (led_matrix_color == 1) {
+					nokia_lcd_write_string("Blue", 1);
+				}
+				else if (led_matrix_color == 2) {
+					nokia_lcd_write_string("Red", 1);
+				}
+				nokia_lcd_render();
+				SM1_State = SM1_LEDMenu2;
+				break;
+			}
+			else if (START) {
+				if (led_matrix_on == 1) {
+					reset_rows(rows);
+					led_matrix_on = 0;
+				}
+				else {
+					led_matrix_on = 1;
+				}
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("LED Settings", 1.5);
+				nokia_lcd_set_cursor(5, 15);
+				nokia_lcd_write_string("Power: ", 1);
+				if (led_matrix_on == 1) {
+					nokia_lcd_write_string("On", 1);
+				}
+				else {
+					nokia_lcd_write_string("Off", 1);
+				}
+				nokia_lcd_set_cursor(0, 15);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Color: ", 1);
+				if (led_matrix_color == 1) {
+					nokia_lcd_write_string("Blue", 1);
+				}
+				else if (led_matrix_color == 2) {
+					nokia_lcd_write_string("Red", 1);
+				}
+				nokia_lcd_render();
+				SM1_State = SM1_LEDMenu1;
+				break;
+			}
+			else if (BACK) {
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("SimpleBTPlayer", 1.5);
+				//nokia_lcd_set_cursor(0, 15);
+				//nokia_lcd_write_string(integer_to_string(cur_mic_value), 1);
+				nokia_lcd_set_cursor(0, 25);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Speaker Mode", 1);
+				nokia_lcd_set_cursor(5, 35);
+				nokia_lcd_write_string("LED Matrix", 1);
+				if (bt_paired == 1) {
+					nokia_lcd_set_cursor(20, 9);
+					nokia_lcd_write_string("Paired", 1);
+				}
+				else if (bt_ready == 1) {
+					nokia_lcd_set_cursor(3, 9);
+					nokia_lcd_write_string("Ready to pair!", 1);
+				}
+				nokia_lcd_render();
+				SM1_State = SM1_Wait1;
+				break;
+			}
+			break; 
+		case SM1_LEDMenu2: 
+			if (up == true) {
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("LED Settings", 1.5);
+				nokia_lcd_set_cursor(5, 15);
+				nokia_lcd_write_string("Power: ", 1);
+				if (led_matrix_on == 1) {
+					nokia_lcd_write_string("On", 1);
+				}
+				else {
+					nokia_lcd_write_string("Off", 1);
+				}
+				nokia_lcd_set_cursor(0, 15);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Color: ", 1);
+				if (led_matrix_color == 1) {
+					nokia_lcd_write_string("Blue", 1);
+				}
+				else if (led_matrix_color == 2) {
+					nokia_lcd_write_string("Red", 1);
+				}
+				nokia_lcd_render();
+				SM1_State = SM1_LEDMenu1;
+				break; 
+			}
+			else if (START) {
+				if (led_matrix_color == 1) {
+					led_matrix_color = 2;
+				}
+				else if (led_matrix_color == 2) {
+					led_matrix_color = 1;
+				}
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("LED Settings", 1.5);
+				nokia_lcd_set_cursor(5, 15);
+				nokia_lcd_write_string("Power: ", 1);
+				if (led_matrix_on == 1) {
+					nokia_lcd_write_string("On", 1);
+				}
+				else {
+					nokia_lcd_write_string("Off", 1);
+				}
+				nokia_lcd_set_cursor(0, 25);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Color: ", 1);
+				if (led_matrix_color == 1) {
+					nokia_lcd_write_string("Blue", 1);
+				}
+				else if (led_matrix_color == 2) {
+					nokia_lcd_write_string("Red", 1);
+				}
+				nokia_lcd_render();
+				SM1_State = SM1_LEDMenu2;
+				break;
+			}
+			else if (BACK) {
+				nokia_lcd_clear();
+				nokia_lcd_set_cursor(0, 0);
+				nokia_lcd_write_string("SimpleBTPlayer", 1.5);
+				//nokia_lcd_set_cursor(0, 15);
+				//nokia_lcd_write_string(integer_to_string(cur_mic_value), 1);
+				nokia_lcd_set_cursor(0, 25);
+				nokia_lcd_write_string("*", 1);
+				nokia_lcd_set_cursor(5, 25);
+				nokia_lcd_write_string("Speaker Mode", 1);
+				nokia_lcd_set_cursor(5, 35);
+				nokia_lcd_write_string("LED Matrix", 1);
+				if (bt_paired == 1) {
+					nokia_lcd_set_cursor(20, 9);
+					nokia_lcd_write_string("Paired", 1);
+				}
+				else if (bt_ready == 1) {
+					nokia_lcd_set_cursor(3, 9);
+					nokia_lcd_write_string("Ready to pair!", 1);
+				}
+				nokia_lcd_render();
+				SM1_State = SM1_Wait1;
+				break;
+			}
+			break; 
 		default: 
 			SM1_State = -1; 
 			break;  
@@ -211,9 +508,11 @@ int SM1_Menu(int SM1_State) {
 		case SM1_Init: 
 			nokia_lcd_clear();
 			nokia_lcd_set_cursor(0, 0);
-			nokia_lcd_write_string("FM Transmitter", 1.5);
+			nokia_lcd_write_string("SimpleBTPlayer", 1.5);
 			//nokia_lcd_set_cursor(5, 15);
 			//nokia_lcd_write_string("FM Mode", 1);
+			//nokia_lcd_set_cursor(0, 15);
+			//nokia_lcd_write_string(integer_to_string(cur_mic_value), 1);
 			nokia_lcd_set_cursor(0, 25);
 			nokia_lcd_write_string("*", 1);
 			nokia_lcd_set_cursor(5, 25);
@@ -231,16 +530,17 @@ int SM1_Menu(int SM1_State) {
 		case SM1_Wait3:
 			resetJoystick(); 
 			break; 
+		case SM1_LEDMenu1:
+			resetJoystick();
+			break;
+		case SM1_LEDMenu2:
+			resetJoystick();
+			break;
 		case SM1_Start: 
-		
 			break; 
 	}
 	return SM1_State; 
 }
-
-///////INITIALIZE MATRIX COLUMN / ROWS//////////
-row ROW_0, ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7;
-row *rows[8] = { &ROW_0, &ROW_1, &ROW_2, &ROW_3, &ROW_4, &ROW_5, &ROW_6, &ROW_7};
 	
 	
 ///////STATE MACHINE 2: Displays pattern on LED matrix/////////
@@ -383,8 +683,7 @@ int SM3_PiInterface(int SM3_State) {
 			SM3_State = SM3_Wait; 
 			break; 
 		case SM3_Wait:
-			if (receivedData != 0x00) {
-				nokia_lcd_clear();
+			if (BT_READY) {
 				SM3_State = SM3_Test; 
 			}
 			else {
@@ -404,25 +703,24 @@ int SM3_PiInterface(int SM3_State) {
 		case SM3_Wait: 
 			break; 
 		case SM3_Test:
-			//PORTD = SetBit(PORTD, 6, 1); 
-			PORTD |= 0x40; 
-			//nokia_lcd_clear(); 
 			break; 
 	}
 	return SM3_State; 
 }
 
+
+
 int main(void)
 {
+	DDRA = 0xF0; PORTA = 0x0F;
 	DDRB = 0x00; PORTB = 0xFF; 
+	DDRC = 0xFF; PORTC = 0x00;
 	DDRD = 0xFF; PORTD = 0x00;
     ADC_init();
     nokia_lcd_init();
     nokia_lcd_clear();
-	SPI_SlaveInit(); 
 	
 	row_init(rows); 
-	init_gametable();
 	
 	
 	//period for tasks
@@ -464,13 +762,11 @@ int main(void)
 	
 	TimerSet(GCD);
 	TimerOn();
-	
     while(1)
     {
 		joys_tick(); 
-		if (receivedData != 0x00) {
-			PORTD |= 0x40; 
-			//nokia_lcd_clear();
+		if (bt_paired == 1 && led_matrix_on == 1) {
+			microphone_tick(rows);
 		}
 	    for (int i = 0; i < numTasks; i++ ) {
 		    if ( tasks[i]->elapsedTime == tasks[i]->period ) {
@@ -478,7 +774,7 @@ int main(void)
 			    tasks[i]->elapsedTime = 0;
 		    }
 		    tasks[i]->elapsedTime += 1;
-	    }
+		}
 	    while(!TimerFlag);
 	    TimerFlag = 0;
     }

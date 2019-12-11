@@ -30,6 +30,11 @@ short readADC(char PIN)
 	return (ADC);
 }
 
+//unsigned short mic_value; 
+//void microphone_tick() {
+	//mic_value = readADC(2); 
+//}
+
 void joys_tick() {
 	unsigned short UD, LR;
 	UD = readADC(1);
